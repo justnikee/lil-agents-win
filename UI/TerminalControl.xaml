@@ -1,0 +1,46 @@
+<UserControl x:Class="LilAgents.Windows.UI.TerminalControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <!-- Chat Output -->
+        <RichTextBox x:Name="OutputBox"
+                     Margin="10,4,10,46"
+                     IsReadOnly="True"
+                     BorderThickness="0"
+                     Padding="2,4"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Disabled"
+                     IsDocumentEnabled="True">
+            <RichTextBox.Document>
+                <FlowDocument x:Name="OutputDocument" PagePadding="0"/>
+            </RichTextBox.Document>
+        </RichTextBox>
+
+        <!-- Input Area -->
+        <Border x:Name="InputBorder"
+                Margin="10,0,10,6"
+                Height="30"
+                VerticalAlignment="Bottom"
+                Padding="0"
+                CornerRadius="8"
+                BorderThickness="1">
+            <Grid>
+                <TextBox x:Name="InputBox"
+                        BorderThickness="0"
+                        Padding="8,2"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        AcceptsReturn="False"
+                        KeyDown="InputBox_KeyDown"
+                        TextChanged="InputBox_TextChanged"
+                        GotKeyboardFocus="InputBox_FocusChanged"
+                        LostKeyboardFocus="InputBox_FocusChanged"/>
+                <TextBlock x:Name="PlaceholderText"
+                           Margin="8,2"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Opacity="0.55"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

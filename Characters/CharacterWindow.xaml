@@ -1,0 +1,28 @@
+<Window x:Class="LilAgents.Windows.Characters.CharacterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        ResizeMode="NoResize"
+        Width="80"
+        Height="100"
+        SizeToContent="Manual"
+        IsHitTestVisible="True"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Grid x:Name="RootGrid">
+        <Image x:Name="CharacterImage"
+               RenderOptions.BitmapScalingMode="HighQuality"
+               Stretch="Uniform"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Bottom">
+            <Image.RenderTransform>
+                <ScaleTransform x:Name="FlipTransform" ScaleX="1" ScaleY="1" CenterX="32" CenterY="40"/>
+            </Image.RenderTransform>
+        </Image>
+    </Grid>
+</Window>
