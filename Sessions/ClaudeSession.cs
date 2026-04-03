@@ -62,7 +62,7 @@ public class ClaudeSession : IAgentSession
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            StandardInputEncoding = Encoding.UTF8,
+            StandardInputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8,
             UseShellExecute = false,
@@ -332,6 +332,7 @@ public class ClaudeSession : IAgentSession
     {
         _remainingErrorLines = MaxErrorLinesPerTurn;
         _suppressedErrorNoticeEmitted = false;
+        _authHintEmitted = false;
     }
 
     private void EmitStderrWithinBudget(string line)
@@ -354,7 +355,7 @@ public class ClaudeSession : IAgentSession
     {
         if (_authHintEmitted)
         {
-            return false;
+            return true;
         }
 
         if (!ContainsAuthHint(line))

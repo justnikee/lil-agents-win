@@ -322,7 +322,12 @@ public class GeminiSession : IAgentSession
 
     private bool TryEmitAuthHint(string line)
     {
-        if (_authHintEmitted || !ContainsAuthHint(line))
+        if (_authHintEmitted)
+        {
+            return true;
+        }
+
+        if (!ContainsAuthHint(line))
         {
             return false;
         }
@@ -372,7 +377,7 @@ public class GeminiSession : IAgentSession
     {
         if (_quotaHintEmitted)
         {
-            return false;
+            return true;
         }
 
         if (!line.Contains("resource_exhausted", StringComparison.OrdinalIgnoreCase) &&
@@ -393,6 +398,7 @@ public class GeminiSession : IAgentSession
         _remainingErrorLines = MaxErrorLinesPerTurn;
         _suppressedErrorNoticeEmitted = false;
         _quotaHintEmitted = false;
+        _authHintEmitted = false;
     }
 
     private void EmitStderrWithinBudget(string line)

@@ -141,12 +141,19 @@ public partial class TerminalControl : UserControl
         var paragraph = new Paragraph
         {
             Margin = new Thickness(0, 8, 0, 4),
-            Foreground = PopoverTheme.Brush(Theme.TerminalLinkColor),
             FontFamily = Theme.TerminalFont,
             FontSize = Theme.TerminalFontSize,
-            FontWeight = FontWeights.SemiBold,
         };
-        paragraph.Inlines.Add(new Run($"> {text}"));
+        paragraph.Inlines.Add(new Run("> ")
+        {
+            Foreground = PopoverTheme.Brush(Theme.TerminalLinkColor),
+            FontWeight = FontWeights.SemiBold
+        });
+        paragraph.Inlines.Add(new Run(text)
+        {
+            Foreground = PopoverTheme.Brush(Theme.TerminalTextColor),
+            FontWeight = FontWeights.SemiBold
+        });
         OutputDocument.Blocks.Add(paragraph);
         ScrollToEnd();
     }
@@ -291,7 +298,7 @@ public partial class TerminalControl : UserControl
             FontSize = Theme.TerminalFontSize - 1,
             FontStyle = FontStyles.Italic,
         };
-        paragraph.Inlines.Add(new Run(message));
+        paragraph.Inlines.Add(new Run("  " + message));
         OutputDocument.Blocks.Add(paragraph);
         ScrollToEnd();
     }
@@ -369,7 +376,7 @@ public partial class TerminalControl : UserControl
             case "/copy":
                 var toCopy = string.IsNullOrWhiteSpace(_lastAssistantText) ? "nothing to copy yet" : _lastAssistantText;
                 Clipboard.SetText(toCopy);
-                AppendSystemMessage("  ✓ copied to clipboard");
+                AppendSystemMessage("✓ copied to clipboard");
                 return true;
 
             case "/help":
@@ -475,7 +482,7 @@ public partial class TerminalControl : UserControl
 
     private void AddInlineMarkdown(Paragraph paragraph, string text)
     {
-        const string pattern = @"(\*\*(.+?)\*\*)|(\*(.+?)\*)|(`(.+?)`)|(\[(.+?)\]\((.+?)\))";
+        const string pattern = @"(\*\*(.+?)\*\*)|(\*(.+?)\*)|(`(.+?)`)|(\[(.+?)\]\((.+?)\))|(https?://[^\s>)]+)";
         var matches = Regex.Matches(text, pattern);
         var lastIndex = 0;
 
@@ -514,6 +521,31 @@ public partial class TerminalControl : UserControl
                 try
                 {
                     hyperlink.NavigateUri = new Uri(match.Groups[9].Value);
+                    hyperlink.RequestNavigate += (_, e) =>
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = e.Uri.AbsoluteUri,
+                            UseShellExecute = true,
+                        });
+                    };
+                }
+                catch
+                {
+                    // Ignore invalid URIs.
+                }
+                paragraph.Inlines.Add(hyperlink);
+            }
+            else if (match.Groups[10].Success)
+            {
+                var hyperlink = new Hyperlink(new Run(match.Groups[10].Value))
+                {
+                    Foreground = PopoverTheme.Brush(Theme.TerminalLinkColor),
+                    TextDecorations = null,
+                };
+                try
+                {
+                    hyperlink.NavigateUri = new Uri(match.Groups[10].Value);
                     hyperlink.RequestNavigate += (_, e) =>
                     {
                         Process.Start(new ProcessStartInfo
@@ -656,10 +688,16 @@ public partial class TerminalControl : UserControl
                 : Visibility.Collapsed;
     }
 
-    private void InputBox_KeyDown(object sender, KeyEventArgs e)
+    private void InputBox_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                // allow newline
+                return;
+            }
+
             SubmitInput();
             e.Handled = true;
         }

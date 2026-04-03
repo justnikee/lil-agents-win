@@ -135,7 +135,6 @@ public class CopilotSession : IAgentSession
 
     private async Task ReadOutputAsync(Process process)
     {
-        var plainTextBuffer = new System.Text.StringBuilder();
         try
         {
             using var reader = process.StandardOutput;
@@ -153,7 +152,10 @@ public class CopilotSession : IAgentSession
                     }
                     else
                     {
-                        plainTextBuffer.AppendLine(line);
+                        if (SessionOutputSanitizer.TrySanitizeLine(line, out var plain))
+                        {
+                            AppendAssistantText(plain + Environment.NewLine);
+                        }
                     }
                 });
             }
@@ -170,17 +172,8 @@ public class CopilotSession : IAgentSession
                 {
                     FlushLineBuffer();
                 }
-                else
-                {
-                    var text = plainTextBuffer.ToString().Trim();
-                    if (!string.IsNullOrWhiteSpace(text))
-                    {
-                        AppendAssistantText(text);
-                    }
-                }
 
                 CompleteTurn();
-                OnProcessExit?.Invoke(process.ExitCode);
             });
         }
     }
@@ -294,7 +287,7 @@ public class CopilotSession : IAgentSession
         {
             case "assistant.message":
                 var content = data?["content"]?.ToString() ?? string.Empty;
-                if (!string.IsNullOrWhiteSpace(content))
+                if (string.IsNullOrWhiteSpace(_currentResponseText) && !string.IsNullOrWhiteSpace(content))
                 {
                     AppendAssistantText(content);
                 }

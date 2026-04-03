@@ -19,7 +19,8 @@
         <!-- Input Area -->
         <Border x:Name="InputBorder"
                 Margin="10,0,10,6"
-                Height="30"
+                MinHeight="30"
+                MaxHeight="150"
                 VerticalAlignment="Bottom"
                 Padding="0"
                 CornerRadius="8"
@@ -27,16 +28,18 @@
             <Grid>
                 <TextBox x:Name="InputBox"
                         BorderThickness="0"
-                        Padding="8,2"
+                        Padding="8,5"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto"
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
-                        AcceptsReturn="False"
-                        KeyDown="InputBox_KeyDown"
+                        AcceptsReturn="True"
+                        PreviewKeyDown="InputBox_PreviewKeyDown"
                         TextChanged="InputBox_TextChanged"
                         GotKeyboardFocus="InputBox_FocusChanged"
                         LostKeyboardFocus="InputBox_FocusChanged"/>
                 <TextBlock x:Name="PlaceholderText"
-                           Margin="8,2"
+                           Margin="9,5"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
                            Opacity="0.55"/>
