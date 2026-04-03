@@ -93,10 +93,20 @@ public static class AgentProviderExtensions
         AgentProvider.Copilot =>
             "Run `copilot login` in a terminal, then retry here.",
         AgentProvider.Gemini =>
-            "Run `gemini` in a terminal and complete sign-in there, then retry here.",
+            "Please set an Auth method in your ~/.gemini/settings.json or specify the GEMINI_API_KEY environment variable, then restart.",
         AgentProvider.OpenCode =>
             "Run `opencode` in a terminal and complete login there, then retry here.",
         _ => "Run the provider CLI in a terminal, sign in, then retry here."
+    };
+
+    public static string? LoginCommand(this AgentProvider p) => p switch
+    {
+        AgentProvider.Claude => "claude auth login",
+        AgentProvider.Codex => "codex login",
+        AgentProvider.Copilot => "copilot login",
+        AgentProvider.Gemini => null,
+        AgentProvider.OpenCode => "opencode",
+        _ => null
     };
 
     public static string InstallInstructions(this AgentProvider p) => p switch

@@ -93,7 +93,8 @@ public class CopilotSession : IAgentSession
         var args = new List<string>();
         if (!_isFirstTurn)
         {
-            args.Add("--continue");
+            args.Add("--resume");
+            args.Add("latest");
         }
         args.Add("-p");
         args.Add(message);

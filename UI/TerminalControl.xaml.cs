@@ -425,7 +425,28 @@ public partial class TerminalControl : UserControl
                 return true;
 
             case "/login":
-                AppendSystemMessage(_provider.LoginHint());
+                var loginCmd = _provider.LoginCommand();
+                if (!string.IsNullOrWhiteSpace(loginCmd))
+                {
+                    AppendSystemMessage($"Running `{loginCmd}` in a new window...");
+                    try
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = $"/c \"{loginCmd} & pause\"",
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendError($"Failed to launch login window: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    AppendSystemMessage(_provider.LoginHint());
+                }
                 return true;
 
             default:

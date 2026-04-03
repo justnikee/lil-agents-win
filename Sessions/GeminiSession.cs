@@ -81,7 +81,8 @@ public class GeminiSession : IAgentSession
         var args = new List<string> { "--yolo" };
         if (!_isFirstTurn)
         {
-            args.Add("--continue");
+            args.Add("--resume");
+            args.Add("latest");
         }
         args.Add("-p");
         args.Add(message);
@@ -333,7 +334,7 @@ public class GeminiSession : IAgentSession
         }
 
         _authHintEmitted = true;
-        EmitError("Gemini is not authenticated. Run `gemini auth` in a terminal, then retry.");
+        EmitError(Provider.LoginHint());
         return true;
     }
 
@@ -341,6 +342,7 @@ public class GeminiSession : IAgentSession
     {
         return text.Contains("login", StringComparison.OrdinalIgnoreCase) ||
                text.Contains("sign in", StringComparison.OrdinalIgnoreCase) ||
+               text.Contains("auth method", StringComparison.OrdinalIgnoreCase) ||
                text.Contains("not authenticated", StringComparison.OrdinalIgnoreCase) ||
                text.Contains("unauthorized", StringComparison.OrdinalIgnoreCase);
     }
