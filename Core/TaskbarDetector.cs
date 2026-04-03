@@ -20,6 +20,7 @@ public static class TaskbarDetector
         public int Index { get; init; }
         public string Name { get; init; } = string.Empty;
         public Rect Bounds { get; init; }
+        public Rect WorkingArea { get; init; }
         public bool IsPrimary { get; init; }
     }
 
@@ -174,6 +175,7 @@ public static class TaskbarDetector
         {
             var screen = screens[i];
             var b = screen.Bounds;
+            var w = screen.WorkingArea;
             displays.Add(new DisplayInfo
             {
                 Index = i,
@@ -183,7 +185,12 @@ public static class TaskbarDetector
                     b.Left / scale,
                     b.Top / scale,
                     b.Width / scale,
-                    b.Height / scale)
+                    b.Height / scale),
+                WorkingArea = new Rect(
+                    w.Left / scale,
+                    w.Top / scale,
+                    w.Width / scale,
+                    w.Height / scale)
             });
         }
 

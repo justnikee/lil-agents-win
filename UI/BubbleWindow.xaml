@@ -28,8 +28,6 @@
                        FontSize="12"
                        TextWrapping="NoWrap"
                        TextTrimming="None"
-                       Width="80"
-                       Height="26"
                        VerticalAlignment="Center"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"/>

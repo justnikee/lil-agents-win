@@ -265,10 +265,10 @@ public class LilAgentsController : IDisposable
 
         if (usePinnedDisplay)
         {
-            var bounds = pinnedDisplay!.Bounds;
-            dockX = bounds.Left;
-            dockWidth = bounds.Width;
-            dockTopY = bounds.Bottom;
+            var workingArea = pinnedDisplay!.WorkingArea;
+            dockX = workingArea.Left;
+            dockWidth = workingArea.Width;
+            dockTopY = workingArea.Bottom;
         }
         else
         {

@@ -59,7 +59,7 @@ public partial class BubbleWindow : Window
     public void PositionAboveFrame(double characterLeft, double characterTop, double characterWidth, double characterHeight)
     {
         var x = characterLeft + (characterWidth - Width) / 2.0;
-        var y = characterTop + (characterHeight * 0.88) - Height;
+        var y = characterTop + (characterHeight * 0.12) - Height;
         Left = Math.Round(x);
         Top = Math.Round(y);
     }
@@ -145,8 +145,6 @@ public partial class BubbleWindow : Window
         Height = BubbleHeight;
         BubbleBorder.Width = bubbleWidth;
         BubbleBorder.Height = BubbleHeight;
-        BubbleText.Width = bubbleWidth;
-        BubbleText.Height = BubbleHeight;
     }
 
     private void OnThemeChanged(PopoverTheme theme)
