@@ -8,6 +8,8 @@ Tiny AI companions that live on your Windows taskbar.
 
 Supports **Claude Code**, **OpenAI Codex**, **GitHub Copilot**, and **Google Gemini** CLIs — switch between them from the system tray.
 
+> **Note**: This is a native Windows WPF port of the original **[lil agents](https://lilagents.xyz)** project for macOS created by [Ryan Stephen](https://github.com/ryanstephen). The original source code can be found at the [lil-agents GitHub repository](https://github.com/ryanstephen/lil-agents).
+
 ## features
 
 - Animated characters rendered from transparent sprite sheets
