@@ -16,6 +16,24 @@
             </RichTextBox.Document>
         </RichTextBox>
 
+        <!-- Thinking Indicator (shown while agent is processing) -->
+        <Border x:Name="ThinkingBorder"
+                Margin="12,0,12,42"
+                Height="18"
+                VerticalAlignment="Bottom"
+                Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse x:Name="Dot1" Width="5" Height="5" Margin="0,0,3,0" Opacity="0.3"/>
+                <Ellipse x:Name="Dot2" Width="5" Height="5" Margin="0,0,3,0" Opacity="0.3"/>
+                <Ellipse x:Name="Dot3" Width="5" Height="5" Margin="0,0,6,0" Opacity="0.3"/>
+                <TextBlock x:Name="ThinkingLabel"
+                           FontSize="10"
+                           Opacity="0.5"
+                           FontStyle="Italic"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
         <!-- Input Area -->
         <Border x:Name="InputBorder"
                 Margin="10,0,10,6"

@@ -5,8 +5,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using LilAgents.Windows.Sessions;
 using LilAgents.Windows.Themes;
+
 
 namespace LilAgents.Windows.UI;
 
@@ -22,6 +24,9 @@ public partial class TerminalControl : UserControl
     private string _currentAssistantText = string.Empty;
     private string _lastAssistantText = string.Empty;
     private AgentProvider _provider = AgentProvider.Claude;
+    private DispatcherTimer? _thinkingTimer;
+    private int _thinkingDotStep;
+
 
     public event Action<string>? OnMessageSubmitted;
     public event Action? OnClearRequested;
@@ -60,6 +65,12 @@ public partial class TerminalControl : UserControl
         PlaceholderText.FontFamily = theme.InputFont;
         PlaceholderText.FontSize = theme.InputFontSize;
 
+        var dotBrush = PopoverTheme.Brush(theme.TerminalTextColor);
+        ThinkingLabel.Foreground = dotBrush;
+        Dot1.Fill = dotBrush;
+        Dot2.Fill = dotBrush;
+        Dot3.Fill = dotBrush;
+
         OutputBox.Resources[SystemColors.ControlBrushKey] = PopoverTheme.Brush(theme.ScrollbarTrackColor);
         UpdatePlaceholderVisibility();
     }
@@ -79,6 +90,36 @@ public partial class TerminalControl : UserControl
             FocusInput();
         }
         UpdatePlaceholderVisibility();
+    }
+
+    public void ShowThinkingIndicator()
+    {
+        ThinkingLabel.Text = "thinking";
+        ThinkingBorder.Visibility = Visibility.Visible;
+
+        _thinkingDotStep = 0;
+        Dot1.Opacity = 0.2;
+        Dot2.Opacity = 0.2;
+        Dot3.Opacity = 0.2;
+
+        if (_thinkingTimer == null)
+        {
+            _thinkingTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+            _thinkingTimer.Tick += (_, _) =>
+            {
+                _thinkingDotStep = (_thinkingDotStep + 1) % 4;
+                Dot1.Opacity = _thinkingDotStep >= 1 ? 0.85 : 0.15;
+                Dot2.Opacity = _thinkingDotStep >= 2 ? 0.85 : 0.15;
+                Dot3.Opacity = _thinkingDotStep >= 3 ? 0.85 : 0.15;
+            };
+        }
+        _thinkingTimer.Start();
+    }
+
+    public void HideThinkingIndicator()
+    {
+        _thinkingTimer?.Stop();
+        ThinkingBorder.Visibility = Visibility.Collapsed;
     }
 
     public void ResetState()

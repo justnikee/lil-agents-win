@@ -499,14 +499,22 @@ public class WalkerCharacter : IDisposable
 
     private void WireSession(IAgentSession session)
     {
+        var firstToken = true;
         session.OnText += text =>
         {
+            if (firstToken)
+            {
+                firstToken = false;
+                _terminalView?.HideThinkingIndicator();
+            }
             _currentStreamingText += text;
             _terminalView?.AppendStreamingText(text);
         };
 
         session.OnTurnComplete += () =>
         {
+            firstToken = true;
+            _terminalView?.HideThinkingIndicator();
             _terminalView?.EndStreaming();
             _isSessionBusy = false;
             PlayCompletionSound();
@@ -558,6 +566,13 @@ public class WalkerCharacter : IDisposable
         _showingCompletion = false;
         _currentStreamingText = string.Empty;
 
+        // Immediately show thinking state – don't wait for the game tick or CLI response
+        _currentPhrase = string.Empty;
+        _lastPhraseUpdate = 0;
+        UpdateThinkingPhrase();
+        ShowBubble(_currentPhrase, false);
+        _terminalView?.ShowThinkingIndicator();
+
         try
         {
             await _session.SendMessageAsync(message);
@@ -565,6 +580,7 @@ public class WalkerCharacter : IDisposable
         catch (Exception ex)
         {
             _terminalView?.AppendError($"Failed to send: {ex.Message}");
+            _terminalView?.HideThinkingIndicator();
             _isSessionBusy = false;
         }
     }
@@ -630,7 +646,7 @@ public class WalkerCharacter : IDisposable
             return;
         }
 
-        if (_isSessionBusy && !_isIdleForPopover)
+        if (_isSessionBusy)
         {
             var oldPhrase = _currentPhrase;
             UpdateThinkingPhrase();
